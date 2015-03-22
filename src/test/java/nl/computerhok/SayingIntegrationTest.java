@@ -42,6 +42,19 @@ public class SayingIntegrationTest {
         String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
         Saying result = clientResponse.readEntity(Saying.class);
         assertEquals("incorrect json response body", expected.toString(), result.toString());
+    }
+
+    @Test
+    public void testGET1() throws IOException {
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/hello-world/1")
+                .request()
+                .header(ACCEPT_ENCODING, "application/json")
+                .get();
+        assertThat(clientResponse.getStatus() == 200);
+
+        String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
+        Saying result = clientResponse.readEntity(Saying.class);
+        assertEquals("incorrect json response body", expected.toString(), result.toString());
 
     }
 }

@@ -3,6 +3,8 @@ package nl.computerhok;
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.jersey.caching.CacheControl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,15 +17,18 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
+    private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
     private final String template;
     private final String defaultName;
     private final AtomicLong counter;
     private final String RESOURCE_PATH = "hello-world";
+    private final HelloWorldDAO dao;
 
-    public HelloWorldResource(String template, String defaultName) {
+    public HelloWorldResource(HelloWorldDAO dao, String template, String defaultName) {
         this.template = template;
         this.defaultName = defaultName;
         this.counter = new AtomicLong();
+        this.dao = dao;
     }
 
     @GET
@@ -34,10 +39,19 @@ public class HelloWorldResource {
         return new Saying(counter.incrementAndGet(), value);
     }
 
+
+    @GET
+    @Timed
+    @Path("{id}")
+    public Saying getSaying(@PathParam("id") long id) {
+        String content = dao.findContentById(id);
+        return new Saying(id, content);
+    }
+
     @POST
     public Response create(Saying saying) throws Exception {
         try {
-            System.out.println("created " + saying);
+            LOG.error("created " + saying);
             if (saying.getContent().contains("exception")) {
                 throw new IllegalArgumentException("dag knul, je wou een exception, hier heb je m");
             }
