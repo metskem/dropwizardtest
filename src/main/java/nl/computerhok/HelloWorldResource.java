@@ -2,6 +2,7 @@ package nl.computerhok;
 
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.caching.CacheControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,9 @@ public class HelloWorldResource {
     }
 
     @POST
-    public Response create(Saying saying) throws Exception {
+    public Response create(@Auth String user, Saying saying) throws Exception {
         try {
-            LOG.error("created " + saying);
+            LOG.error("user " + user + " created " + saying);
             if (saying.getContent().contains("exception")) {
                 throw new IllegalArgumentException("dag knul, je wou een exception, hier heb je m");
             }
