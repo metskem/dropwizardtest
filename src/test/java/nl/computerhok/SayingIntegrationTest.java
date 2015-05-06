@@ -29,11 +29,11 @@ public class SayingIntegrationTest {
 
     @ClassRule
     public static final DropwizardAppRule<HelloWorldConfiguration> RULE =
-            new DropwizardAppRule<HelloWorldConfiguration>(HelloWorldApplication.class, ResourceHelpers.resourceFilePath("hello-world.yaml"));
+            new DropwizardAppRule<>(HelloWorldApplication.class, ResourceHelpers.resourceFilePath("helloworld.yaml"));
 
     @Test
     public void testGET() throws IOException {
-        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/hello-world?name=dag%20knul")
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/helloworld/1")
                 .request()
                 .header(ACCEPT_ENCODING, "application/json")
                 .get();
@@ -41,12 +41,12 @@ public class SayingIntegrationTest {
 
         String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
         Saying result = clientResponse.readEntity(Saying.class);
-        assertEquals("incorrect json response body", expected.toString(), result.toString());
+        assertEquals("incorrect json response body", expected, result.toString());
     }
 
     @Test
     public void testGET1() throws IOException {
-        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/hello-world/1")
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/helloworld/1")
                 .request()
                 .header(ACCEPT_ENCODING, "application/json")
                 .get();
@@ -54,7 +54,7 @@ public class SayingIntegrationTest {
 
         String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
         Saying result = clientResponse.readEntity(Saying.class);
-        assertEquals("incorrect json response body", expected.toString(), result.toString());
+        assertEquals("incorrect json response body", expected, result.toString());
 
     }
 }

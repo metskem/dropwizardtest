@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 public class HelloWorldTask extends Task{
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldTask.class.getName());
     protected HelloWorldTask() {
-        super("hello-world-task");
+        super("helloworld-task");
     }
 
     @Override

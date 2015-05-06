@@ -1,7 +1,6 @@
 package nl.computerhok;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthFactory;
@@ -22,13 +21,13 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
     @Override
     public String getName() {
-        return "hello-world";
+        return "helloworld";
     }
 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
         // Enable variable substitution with environment variables
-        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor()));
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
     }
 
     @Override
@@ -47,7 +46,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         //  DB stuff
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
-        final HelloWorldDAO dao = jdbi.onDemand(HelloWorldDAO.class);
+        final SayingDAO dao = jdbi.onDemand(SayingDAO.class);
         final HelloWorldResource resource = new HelloWorldResource(dao, configuration.getTemplate(), configuration.getDefaultName());
         environment.jersey().register(resource);
 
@@ -57,7 +56,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
 
         // authentication without cache
-        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
+        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
 
 //
 //        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new BasicAuthFactory<CachingAuthenticator>(cachingAuthenticator)),

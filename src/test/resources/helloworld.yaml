@@ -1,6 +1,14 @@
 template: Hello, %s!
 defaultName: dag knul!
 
+logging:
+  level: ${DW_LOGLEVEL:-info}
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+
 database:
   # the name of your JDBC driver
   driverClass: com.mysql.jdbc.Driver

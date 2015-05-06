@@ -2,7 +2,7 @@ template: Hello, %s!
 defaultName: dag knul!
 
 logging:
-  level: info
+  level: ${DW_LOGLEVEL:-info}
   appenders:
     - type: console
       threshold: ALL
@@ -12,27 +12,27 @@ logging:
 server:
   applicationConnectors:
     - type: https
-      port: 8443
-      keyStorePath: /home/metskem/.keystore
-      keyStorePassword: changeit
+      port: ${DW_HTTPS_PORT:-8443}
+      keyStorePath: ${DW_KEYSTORE_PATH:-/home/metskem/.keystore}
+      keyStorePassword: ${DW_KEYSTORE_PASSWORD:-changeit}
       validateCerts: false
 
 database:
   # the name of your JDBC driver
-  driverClass: com.mysql.jdbc.Driver
+  driverClass: ${DW_JDBC_DRIVER_CLASS:-com.mysql.jdbc.Driver}
 
   # the username
-  user: dropwizardtest
+  user: ${JDBC_USER:-dropwizardtest}
 
   # the password
-  password: dropwizardtest
+  password: ${JDBC_PASSWORD:-dropwizardtest}
 
   # the JDBC URL
   url: jdbc:mysql://localhost/dropwizardtest
 
   # any properties specific to your JDBC driver:
   properties:
-    charSet: UTF-8
+    charSet: ${JDBC_CHARSET:-UTF-8}
 
   # the maximum amount of time to wait on an empty pool before throwing an exception
   maxWaitForConnection: 1s
@@ -57,4 +57,3 @@ database:
 
   # the minimum amount of time an connection must sit idle in the pool before it is eligible for eviction
   minIdleTime: 1 minute
-

@@ -11,21 +11,21 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Path("/hello-world")
+@Path("/helloworld")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
     private final String template;
     private final String defaultName;
     private final AtomicLong counter;
-    private final String RESOURCE_PATH = "hello-world";
-    private final HelloWorldDAO dao;
+    private final String RESOURCE_PATH = "helloworld";
+    private final SayingDAO dao;
 
-    public HelloWorldResource(HelloWorldDAO dao, String template, String defaultName) {
+    public HelloWorldResource(SayingDAO dao, String template, String defaultName) {
         this.template = template;
         this.defaultName = defaultName;
         this.counter = new AtomicLong();
@@ -35,9 +35,8 @@ public class HelloWorldResource {
     @GET
     @Timed
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
-    public Saying sayHello(@QueryParam("name") Optional<String> name) {
-        final String value = String.format(template, name.or(defaultName));
-        return new Saying(counter.incrementAndGet(), value);
+    public List<Saying> findAll(@QueryParam("name") Optional<String> name) {
+        return dao.findAll();
     }
 
 
@@ -52,11 +51,13 @@ public class HelloWorldResource {
     @POST
     public Response create(@Auth String user, Saying saying) throws Exception {
         try {
-            LOG.error("user " + user + " created " + saying);
             if (saying.getContent().contains("exception")) {
                 throw new IllegalArgumentException("dag knul, je wou een exception, hier heb je m");
             }
-            return Response.created(new URI(RESOURCE_PATH + "/" + "4711")).build();
+            long newid = dao.insert(saying.getContent());
+            saying.setId(newid);
+            LOG.error("user " + user + " created saying " + saying);
+            return Response.created(new URI(RESOURCE_PATH + "/" + newid)).build();
         } catch (Exception e) {
             throw new WebApplicationException(e);
         }
