@@ -6,6 +6,7 @@ import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
 import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
+import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.jdbi.*;
@@ -18,6 +19,8 @@ import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.LoggerFactory;
+
+import java.util.TimeZone;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -65,7 +68,7 @@ public class DBIFactory {
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
         dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory());
-        dbi.registerMapper(new JodaDateTimeMapper());
+        dbi.registerMapper(new JodaDateTimeMapper(Optional.of(TimeZone.getDefault())));
         return dbi;
     }
 }

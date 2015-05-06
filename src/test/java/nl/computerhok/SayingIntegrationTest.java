@@ -1,6 +1,5 @@
 package nl.computerhok;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.testing.ResourceHelpers;
@@ -9,17 +8,12 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static java.util.Arrays.asList;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.VARY;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
