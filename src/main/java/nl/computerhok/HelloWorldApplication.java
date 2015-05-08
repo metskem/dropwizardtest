@@ -3,6 +3,7 @@ package nl.computerhok;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.cache.CacheBuilderSpec;
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthFactory;
 import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.basic.BasicAuthFactory;
@@ -28,6 +29,9 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
         // Enable variable substitution with environment variables
         bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
+
+        // support some static content (from the assets folder)
+        bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
     @Override

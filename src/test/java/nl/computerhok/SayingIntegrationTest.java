@@ -27,7 +27,7 @@ public class SayingIntegrationTest {
 
     @Test
     public void testGET() throws IOException {
-        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/helloworld/1")
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/application/helloworld/1")
                 .request()
                 .header(ACCEPT_ENCODING, "application/json")
                 .get();
@@ -40,7 +40,7 @@ public class SayingIntegrationTest {
 
     @Test
     public void testGET1() throws IOException {
-        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/helloworld/1")
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() +"/application/helloworld/1")
                 .request()
                 .header(ACCEPT_ENCODING, "application/json")
                 .get();
