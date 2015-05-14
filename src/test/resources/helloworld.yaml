@@ -9,9 +9,9 @@ logging:
       timeZone: UTC
       target: stdout
 
-server:
-  type: simple
-  rootPath: /application/*
+# server:
+#  type: simple
+#  rootPath: /application/*
 
 database:
   # the name of your JDBC driver

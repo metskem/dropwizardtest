@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/helloworld")
+@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
@@ -36,7 +37,9 @@ public class HelloWorldResource {
     @Timed
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
     public List<Saying> findAll(@QueryParam("name") Optional<String> name) {
-        return dao.findAll();
+        List<Saying> sayings = dao.findAll();
+        LOG.error("returning sayings: " + sayings);
+        return sayings;
     }
 
 

@@ -5,6 +5,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -20,10 +21,10 @@ public interface SayingDAO {
     @GetGeneratedKeys
     long insert(@Bind("content") String content);
 
+    @SqlQuery("select id,content from saying")
+    @Mapper(SayingMapper.class)
+    List<Saying> findAll();
+
     @SqlQuery("select content from saying where id = :id")
     String findContentById(@Bind("id") long id);
-
-    @RegisterMapper(SayingMapper.class)
-    @SqlQuery("select id,content from saying")
-    List<Saying> findAll();
 }

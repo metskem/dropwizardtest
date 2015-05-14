@@ -1,5 +1,18 @@
 <html>
- <body>
- <center>This is the dropwizardtest home page</center>
+<head>
+ <title>DropWizard Test</title>
+ <script>
+  function showData(yourUrl){
+  var Httpreq = new XMLHttpRequest(); // a new request
+  Httpreq.open("GET",yourUrl,false);
+  Httpreq.send(null);
+  var responseText = Httpreq.responseText;
+  var json = JSON.parse(responseText);
+  console.log("this is id and content: " + json.elements[1].id + " " + json.elements[1].content);
+ }
+ </script>
+</head>
+ <body onload='showData("/helloworld")'>
+ <center><h1>This is the dropwizardtest home page, version 1</h1></center>
  </body>
 </html>
