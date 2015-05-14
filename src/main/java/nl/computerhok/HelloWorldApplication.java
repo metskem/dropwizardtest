@@ -41,6 +41,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
 
         // support some static content (from the assets folder)
+        bootstrap.addBundle(new AssetsBundle("/assets/favicon.ico", "/favicon.ico", "/favicon.ico","favicon-bundle"));
         bootstrap.addBundle(new AssetsBundle("/assets/", "/static"));
     }
 
@@ -68,7 +69,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
 //        removeDefaultExceptionMappers(environment);
 
-        environment.jersey().register(new CustomExceptionMapper());
+//        environment.jersey().register(new CustomExceptionMapper());
 
         // authentication with cache (not used yet)
         SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
