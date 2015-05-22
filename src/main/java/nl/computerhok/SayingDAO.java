@@ -21,6 +21,9 @@ public interface SayingDAO {
     @GetGeneratedKeys
     long insert(@Bind("content") String content);
 
+    @SqlUpdate("delete from saying where id = :id")
+    void delete(@Bind("id") long id);
+
     @SqlQuery("select id,content from saying")
     @Mapper(SayingMapper.class)
     List<Saying> findAll();

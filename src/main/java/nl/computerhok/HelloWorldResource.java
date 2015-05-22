@@ -7,7 +7,9 @@ import io.dropwizard.jersey.caching.CacheControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -38,7 +40,7 @@ public class HelloWorldResource {
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
     public List<Saying> findAll(@QueryParam("name") Optional<String> name) {
         List<Saying> sayings = dao.findAll();
-        LOG.error("returning sayings: " + sayings);
+        LOG.info("returning sayings: " + sayings);
         return sayings;
     }
 
@@ -49,6 +51,24 @@ public class HelloWorldResource {
     public Saying getSaying(@PathParam("id") long id) {
         String content = dao.findContentById(id);
         return new Saying(id, content);
+    }
+
+
+    @GET
+    @Timed
+    @Path("stresstest/{factor}/{leakMemory}")
+    public long stresstest(@Context HttpServletRequest request, @PathParam("factor") int factor,@PathParam("leakMemory") boolean leakMemory) {
+        return StressTester.test(factor,leakMemory,request.getSession());
+    }
+
+
+    @DELETE
+    @Timed
+    @Path("{id}")
+    public Response delete(@PathParam("id") long id) {
+        dao.delete(id);
+        LOG.error("deleted content with id " + id);
+        return Response.ok().build();
     }
 
     @POST

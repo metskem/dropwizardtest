@@ -35,7 +35,7 @@ database:
     charSet: ${JDBC_CHARSET:-UTF-8}
 
   # the maximum amount of time to wait on an empty pool before throwing an exception
-  maxWaitForConnection: 1s
+  maxWaitForConnection: 2s
 
   # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyService Health Check */ SELECT 1"
@@ -44,13 +44,13 @@ database:
   validationQueryTimeout: 3s
 
   # the minimum number of connections to keep open
-  minSize: 8
+  minSize: 0
 
   # the maximum number of connections to keep open
-  maxSize: 32
+  maxSize: 15
 
   # whether or not idle connections should be validated
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: true
 
   # the amount of time to sleep between runs of the idle connection validation, abandoned cleaner and idle pool resizing
   evictionInterval: 10s

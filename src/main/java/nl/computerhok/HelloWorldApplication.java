@@ -13,6 +13,7 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
@@ -58,10 +59,14 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         // tasks
         environment.admin().addTask(new HelloWorldTask());
 
+        // we want to use HttpSessions
+        environment.servlets().setSessionHandler(new SessionHandler());
+
         //  DB stuff
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
+        final DBI jdbi = factory.build(environment, configuration.getDataSourceFactory(), "mysql");
         final SayingDAO dao = jdbi.onDemand(SayingDAO.class);
+
         final HelloWorldResource resource = new HelloWorldResource(dao, configuration.getTemplate(), configuration.getDefaultName());
         environment.jersey().register(resource);
 
