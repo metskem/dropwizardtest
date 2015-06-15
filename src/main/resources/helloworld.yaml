@@ -28,7 +28,7 @@ database:
   password: ${JDBC_PASSWORD:-dropwizardtest}
 
   # the JDBC URL
-  url: jdbc:mysql://localhost/dropwizardtest
+  url: ${JDBC_URL:-jdbc:mysql://localhost/dropwizardtest}
 
   # any properties specific to your JDBC driver:
   properties:
