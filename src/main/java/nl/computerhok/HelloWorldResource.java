@@ -7,7 +7,9 @@ import io.dropwizard.jersey.caching.CacheControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -16,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/helloworld")
+@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
@@ -36,7 +39,9 @@ public class HelloWorldResource {
     @Timed
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
     public List<Saying> findAll(@QueryParam("name") Optional<String> name) {
-        return dao.findAll();
+        List<Saying> sayings = dao.findAll();
+        LOG.info("returning sayings: " + sayings);
+        return sayings;
     }
 
 
@@ -46,6 +51,24 @@ public class HelloWorldResource {
     public Saying getSaying(@PathParam("id") long id) {
         String content = dao.findContentById(id);
         return new Saying(id, content);
+    }
+
+
+    @GET
+    @Timed
+    @Path("stresstest/{factor}/{leakMemory}")
+    public long stresstest(@Context HttpServletRequest request, @PathParam("factor") int factor,@PathParam("leakMemory") boolean leakMemory) {
+        return StressTester.test(factor,leakMemory,request.getSession());
+    }
+
+
+    @DELETE
+    @Timed
+    @Path("{id}")
+    public Response delete(@PathParam("id") long id) {
+        dao.delete(id);
+        LOG.error("deleted content with id " + id);
+        return Response.ok().build();
     }
 
     @POST

@@ -9,6 +9,10 @@ logging:
       timeZone: UTC
       target: stdout
 
+# server:
+#  type: simple
+#  rootPath: /application/*
+
 database:
   # the name of your JDBC driver
   driverClass: com.mysql.jdbc.Driver
@@ -20,7 +24,7 @@ database:
   password: dropwizardtest
 
   # the JDBC URL
-  url: jdbc:mysql://localhost/dropwizardtest
+  url: jdbc:mysql://lsrv4180.linux.rabobank.nl/dropwizardtest
 
   # any properties specific to your JDBC driver:
   properties:

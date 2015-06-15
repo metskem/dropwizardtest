@@ -95,6 +95,7 @@
     <orderEntry type="library" name="Maven: org.jdbi:jdbi:2.59" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard.metrics:metrics-jdbi:3.1.1" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-auth:0.8.1" level="project" />
+    <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-assets:0.8.1" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.34" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.dropwizard:dropwizard-testing:0.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-core:1.10.17" level="project" />

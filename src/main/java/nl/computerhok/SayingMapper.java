@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 public class SayingMapper implements ResultSetMapper<Saying>
 {
-   public Saying map(int index, ResultSet r, StatementContext ctx) throws SQLException
-   {
-       return new Saying(r.getInt("id"), r.getString("content"));
-   }
+    public Saying map(int index, ResultSet r, StatementContext ctx) throws SQLException
+    {
+        return new Saying(r.getInt("id"), r.getString("content"));
+    }
 }

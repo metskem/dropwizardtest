@@ -12,6 +12,8 @@ import static io.dropwizard.testing.FixtureHelpers.fixture;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 
@@ -49,6 +51,21 @@ public class SayingIntegrationTest {
         String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
         Saying result = clientResponse.readEntity(Saying.class);
         assertEquals("incorrect json response body", expected, result.toString());
+
+    }
+
+    @Test
+    public void testGETList() throws IOException {
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() + "/helloworld")
+                .request()
+                .header(ACCEPT_ENCODING, "application/json")
+                .get();
+        assertThat(clientResponse.getStatus() == 200);
+
+        String expected = MAPPER.readValue(fixture("fixtures/saying.json"), Saying.class).toString();
+        InputStream is = clientResponse.readEntity(InputStream.class);
+        System.out.println(clientResponse);
+//        assertEquals("incorrect json response body", expected, result.toString());
 
     }
 }
