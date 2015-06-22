@@ -18,7 +18,7 @@
             <directory>target</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>dropwizardtest*.jar</include>
             </includes>
         </fileSet>        
     </fileSets>
