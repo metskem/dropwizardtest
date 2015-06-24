@@ -16,7 +16,7 @@ server:
       # keyStorePath: ${DW_KEYSTORE_PATH:-/home/metskem/.keystore}
       # keyStorePassword: ${DW_KEYSTORE_PASSWORD:-changeit}
       # validateCerts: false
-    adminConnectors:
+  adminConnectors:
     - type: http
       port: ${DW_ADMIN_PORT:-9001}
 
