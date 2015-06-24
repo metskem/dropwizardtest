@@ -16,6 +16,9 @@ server:
       # keyStorePath: ${DW_KEYSTORE_PATH:-/home/metskem/.keystore}
       # keyStorePassword: ${DW_KEYSTORE_PASSWORD:-changeit}
       # validateCerts: false
+    adminConnectors:
+    - type: http
+      port: ${DW_ADMIN_PORT:-9001}
 
 database:
   # the name of your JDBC driver
