@@ -38,13 +38,13 @@ database:
     charSet: ${DW_JDBC_CHARSET:-UTF-8}
 
   # the maximum amount of time to wait on an empty pool before throwing an exception
-  maxWaitForConnection: 2s
+  maxWaitForConnection: 10s
 
   # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyService Health Check */ SELECT 1"
 
   # the timeout before a connection validation queries fail
-  validationQueryTimeout: 3s
+  validationQueryTimeout: 10s
 
   # the minimum number of connections to keep open
   minSize: 0
