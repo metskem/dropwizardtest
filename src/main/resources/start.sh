@@ -1,3 +1,6 @@
 # dump envvars:
 env
-java -jar dropwizardtest-1.0-SNAPSHOT.jar server helloworld.yaml
+# set current dir
+cd ${0%/*}
+# run app
+java -jar dropwizardtest*.jar server helloworld.yaml
