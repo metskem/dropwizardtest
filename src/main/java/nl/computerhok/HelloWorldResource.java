@@ -33,6 +33,9 @@ public class HelloWorldResource {
     private final String RESOURCE_PATH = "helloworld";
     private final SayingDAO dao;
 
+    private static int simpleHitCounter;
+    private static final LocalDateTime startTime = new LocalDateTime();
+
     public HelloWorldResource(SayingDAO dao, String template, String defaultName) {
         this.template = template;
         this.defaultName = defaultName;
@@ -72,7 +75,9 @@ public class HelloWorldResource {
     @Path("server-info")
     public String server_info(@Context HttpServletRequest request) {
         StringBuilder resp = new StringBuilder();
-        resp.append("\ntimestamp             : " + new LocalDateTime());
+        resp.append("\nserver time           : " + new LocalDateTime());
+        resp.append("\ninstance start time   : " + startTime);
+        resp.append("\ntinstance hitcount    : " + ++simpleHitCounter);
         resp.append("\nrequest uri           : " + request.getRequestURI());
         resp.append("\nctx version (maj/min) : " + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion());
         resp.append("\ncontext server info   : " + request.getServletContext().getServerInfo());
