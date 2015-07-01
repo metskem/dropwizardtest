@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.caching.CacheControl;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,8 +13,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -59,6 +64,40 @@ public class HelloWorldResource {
     @Path("stresstest/{factor}/{leakMemory}")
     public long stresstest(@Context HttpServletRequest request, @PathParam("factor") int factor,@PathParam("leakMemory") boolean leakMemory) {
         return StressTester.test(factor,leakMemory,request.getSession());
+    }
+
+
+    @GET
+    @Timed
+    @Path("server-info")
+    public String server_info(@Context HttpServletRequest request)  {
+        StringBuilder resp = new StringBuilder("<html><body><pre>");
+        resp.append("\ntimestamp             : " + new LocalDateTime());
+        resp.append("\nrequest uri           : " + request.getRequestURI());
+        resp.append("\nctx version (maj/min) : " + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion());
+        resp.append("\ncontext server info   : " + request.getServletContext().getServerInfo());
+
+        resp.append("\ncurrent session       : " + request.getSession(false));
+
+        resp.append("\nremote user           : " + request.getRemoteUser());
+        resp.append("\nremote host           : " + request.getRemoteHost());
+        try {
+            resp.append("\nresponding host : " + InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        // dump envvars
+        Map envMap = System.getenv();
+        resp.append("\n  ----   env vars -----");
+        Set envKeys = envMap.keySet();
+        for (Object envKey :envKeys) {
+            resp.append("\n" + envKey + ":" + envMap.get(envKey));
+        }
+
+        resp.append("\n  ----------");
+        resp.append("</pre></body></html>");
+        return resp.toString();
     }
 
 
