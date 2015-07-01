@@ -62,16 +62,16 @@ public class HelloWorldResource {
     @GET
     @Timed
     @Path("stresstest/{factor}/{leakMemory}")
-    public long stresstest(@Context HttpServletRequest request, @PathParam("factor") int factor,@PathParam("leakMemory") boolean leakMemory) {
-        return StressTester.test(factor,leakMemory,request.getSession());
+    public long stresstest(@Context HttpServletRequest request, @PathParam("factor") int factor, @PathParam("leakMemory") boolean leakMemory) {
+        return StressTester.test(factor, leakMemory, request.getSession());
     }
 
 
     @GET
     @Timed
     @Path("server-info")
-    public String server_info(@Context HttpServletRequest request)  {
-        StringBuilder resp = new StringBuilder("<html><body><pre>");
+    public String server_info(@Context HttpServletRequest request) {
+        StringBuilder resp = new StringBuilder();
         resp.append("\ntimestamp             : " + new LocalDateTime());
         resp.append("\nrequest uri           : " + request.getRequestURI());
         resp.append("\nctx version (maj/min) : " + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion());
@@ -82,7 +82,7 @@ public class HelloWorldResource {
         resp.append("\nremote user           : " + request.getRemoteUser());
         resp.append("\nremote host           : " + request.getRemoteHost());
         try {
-            resp.append("\nresponding host : " + InetAddress.getLocalHost().getHostName());
+            resp.append("\nresponding host       : " + InetAddress.getLocalHost().getHostName());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -91,12 +91,11 @@ public class HelloWorldResource {
         Map envMap = System.getenv();
         resp.append("\n  ----   env vars -----");
         Set envKeys = envMap.keySet();
-        for (Object envKey :envKeys) {
+        for (Object envKey : envKeys) {
             resp.append("\n" + envKey + ":" + envMap.get(envKey));
         }
 
         resp.append("\n  ----------");
-        resp.append("</pre></body></html>");
         return resp.toString();
     }
 
