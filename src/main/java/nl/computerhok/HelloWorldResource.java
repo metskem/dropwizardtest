@@ -77,7 +77,7 @@ public class HelloWorldResource {
         StringBuilder resp = new StringBuilder();
         resp.append("\nserver time           : " + new LocalDateTime());
         resp.append("\ninstance start time   : " + startTime);
-        resp.append("\ninstance hitcount    : " + ++simpleHitCounter);
+        resp.append("\ninstance hitcount     : " + ++simpleHitCounter);
         resp.append("\nrequest uri           : " + request.getRequestURI());
         resp.append("\nctx version (maj/min) : " + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion());
         resp.append("\ncontext server info   : " + request.getServletContext().getServerInfo());
