@@ -75,6 +75,7 @@ public class HelloWorldResource {
     @Path("/server-info")
     public String server_info(@Context HttpServletRequest request) {
         StringBuilder resp = new StringBuilder();
+        resp.append("\napplication version   : 1.2");
         resp.append("\nserver time           : " + new LocalDateTime());
         resp.append("\ninstance start time   : " + startTime);
         resp.append("\ninstance hitcount     : " + ++simpleHitCounter);
