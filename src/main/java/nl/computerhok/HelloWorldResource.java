@@ -72,7 +72,7 @@ public class HelloWorldResource {
 
     @GET
     @Timed
-    @Path("server-info")
+    @Path("/server-info")
     public String server_info(@Context HttpServletRequest request) {
         StringBuilder resp = new StringBuilder();
         resp.append("\nserver time           : " + new LocalDateTime());
