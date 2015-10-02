@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -73,36 +74,43 @@ public class HelloWorldResource {
     @GET
     @Timed
     @Path("/server-info")
-    public String server_info(@Context HttpServletRequest request) {
-        StringBuilder resp = new StringBuilder();
-        resp.append("\napplication version   : 1.6");
-        resp.append("\nserver time           : " + new LocalDateTime());
-        resp.append("\ninstance start time   : " + startTime);
-        resp.append("\ninstance hitcount     : " + ++simpleHitCounter);
-        resp.append("\nrequest uri           : " + request.getRequestURI());
-        resp.append("\nctx version (maj/min) : " + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion());
-        resp.append("\ncontext server info   : " + request.getServletContext().getServerInfo());
+    public String server_info(@Context HttpServletRequest request, @Context HttpServletResponse response) {
+        StringBuilder payload = new StringBuilder();
+        payload.append("<table> ");
+        payload.append("<tr><td>application version</td><td>" + "1.7 </td></tr>");
+        payload.append("<tr><td>server time           </td><td>" +  new LocalDateTime() + "</td></tr>");
+        payload.append("<tr><td>instance start time   </td><td>" +  startTime + "</td></tr>");
+        payload.append("<tr><td>instance hitcount     </td><td>" +  ++simpleHitCounter + "</td></tr>");
+        payload.append("<tr><td>request uri           </td><td>" +  request.getRequestURI() + "</td></tr>");
+        payload.append("<tr><td>ctx version (maj/min) </td><td>" +  request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion() + "</td></tr>");
+        payload.append("<tr><td>context server info   </td><td>" +  request.getServletContext().getServerInfo() + "</td></tr>");
 
-        resp.append("\ncurrent session       : " + request.getSession(false));
+        payload.append("<tr><td>current session       </td><td>" +  request.getSession(false) + "</td></tr>");
 
-        resp.append("\nremote user           : " + request.getRemoteUser());
-        resp.append("\nremote host           : " + request.getRemoteHost());
+        payload.append("<tr><td>remote user           </td><td>" +  request.getRemoteUser() + "</td></tr>");
+        payload.append("<tr><td>remote host           </td><td>" +  request.getRemoteHost() + "</td></tr>");
         try {
-            resp.append("\nresponding host       : " + InetAddress.getLocalHost().getHostName());
+            payload.append("<tr><td>responding host       </td><td>" +  InetAddress.getLocalHost().getHostName() + "</td></tr>");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
         // dump envvars
-        Map envMap = System.getenv();
-        resp.append("\n  ----   env vars -----");
-        Set envKeys = envMap.keySet();
-        for (Object envKey : envKeys) {
-            resp.append("\n" + envKey + ":" + envMap.get(envKey));
-        }
+        String envvarsRequestedStr = request.getParameter("envvars");
+        if (envvarsRequestedStr != null) {
+            Map envMap = System.getenv();
+            payload.append("<br/> <table> <tr> <th>envvar</th> <th>value</th> </tr>");
+            Set envKeys = envMap.keySet();
+            for (Object envKey : envKeys) {
+                payload.append("<tr><td>" + envKey + "</td><td>" + envMap.get(envKey) + "</td></tr>");
+            }
+            payload.append("</table>");
 
-        resp.append("\n  ----------");
-        return resp.toString();
+        } else {
+            payload.append("<br/>use the envvars query parameter to dump all environment variables");
+        }
+        response.setHeader("Content-type","text/html");
+        return payload.toString();
     }
 
 
