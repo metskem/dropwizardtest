@@ -74,9 +74,11 @@ public class HelloWorldResource {
     @GET
     @Timed
     @Path("/server-info")
-    public String server_info(@Context HttpServletRequest request, @Context HttpServletResponse response) {
+    @Produces(MediaType.TEXT_HTML)
+    public String server_info(@Context HttpServletRequest request) {
         StringBuilder payload = new StringBuilder();
-        payload.append("<table> ");
+//        payload.append("<html><body><table border=1 bgcolor="FF8C00"> ");   // orange background
+        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
         payload.append("<tr><td>application version</td><td>" + "1.7 </td></tr>");
         payload.append("<tr><td>server time           </td><td>" +  new LocalDateTime() + "</td></tr>");
         payload.append("<tr><td>instance start time   </td><td>" +  startTime + "</td></tr>");
@@ -94,12 +96,13 @@ public class HelloWorldResource {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        payload.append("</table>");
 
         // dump envvars
         String envvarsRequestedStr = request.getParameter("envvars");
         if (envvarsRequestedStr != null) {
             Map envMap = System.getenv();
-            payload.append("<br/> <table> <tr> <th>envvar</th> <th>value</th> </tr>");
+            payload.append("<br/> <table border=1> <tr> <th>envvar</th> <th>value</th> </tr>");
             Set envKeys = envMap.keySet();
             for (Object envKey : envKeys) {
                 payload.append("<tr><td>" + envKey + "</td><td>" + envMap.get(envKey) + "</td></tr>");
@@ -108,8 +111,8 @@ public class HelloWorldResource {
 
         } else {
             payload.append("<br/>use the envvars query parameter to dump all environment variables");
+            payload.append("</body></html>");
         }
-        response.setHeader("Content-type","text/html");
         return payload.toString();
     }
 
