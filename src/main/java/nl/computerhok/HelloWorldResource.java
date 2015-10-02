@@ -77,9 +77,9 @@ public class HelloWorldResource {
     @Produces(MediaType.TEXT_HTML)
     public String server_info(@Context HttpServletRequest request) {
         StringBuilder payload = new StringBuilder();
-        payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
-//        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
-        payload.append("<tr><td>application version</td><td>" + "1.7 </td></tr>");
+//        payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
+        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
+        payload.append("<tr><td>application version</td><td>" + "1.8 </td></tr>");
         payload.append("<tr><td>server time           </td><td>" +  new LocalDateTime() + "</td></tr>");
         payload.append("<tr><td>instance start time   </td><td>" +  startTime + "</td></tr>");
         payload.append("<tr><td>instance hitcount     </td><td>" +  ++simpleHitCounter + "</td></tr>");
