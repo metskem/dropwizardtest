@@ -1,6 +1,7 @@
+#!/bin/sh
 # dump envvars:
 env
-# set current dir
-cd ${0%/*}
+# cd to dir, but not to current dir
+cd $(find . -type d ! -name ".")
 # run app
 java -jar dropwizardtest*.jar server helloworld.yaml
