@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -77,9 +78,9 @@ public class HelloWorldResource {
     @Produces(MediaType.TEXT_HTML)
     public String server_info(@Context HttpServletRequest request) {
         StringBuilder payload = new StringBuilder();
-//        payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
-        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
-        payload.append("<tr><td>application version</td><td>" + "1.2 </td></tr>");
+        payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
+//        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
+        payload.append("<tr><td>application version</td><td>" + "1.3 </td></tr>");
         payload.append("<tr><td>server time           </td><td>" +  new LocalDateTime() + "</td></tr>");
         payload.append("<tr><td>instance start time   </td><td>" +  startTime + "</td></tr>");
         payload.append("<tr><td>instance hitcount     </td><td>" +  ++simpleHitCounter + "</td></tr>");
@@ -98,9 +99,25 @@ public class HelloWorldResource {
         }
         payload.append("</table>");
 
+        // dump http headers
+        String headersRequested = request.getParameter("headers");
+        if (headersRequested != null) {
+            Enumeration<String> headerNames = request.getHeaderNames();
+            payload.append("<br/> <table border=1> <tr> <th>header</th> <th>value</th> </tr>");
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                payload.append("<tr><td>" + headerName + "</td><td>" + request.getHeader(headerName) + "</td></tr>");
+            }
+            payload.append("</table>");
+
+        } else {
+            payload.append("<br/>use the headers query parameter to dump all headers");
+            payload.append("</body></html>");
+        }
+
         // dump envvars
-        String envvarsRequestedStr = request.getParameter("envvars");
-        if (envvarsRequestedStr != null) {
+        String envvarsRequested = request.getParameter("envvars");
+        if (envvarsRequested != null) {
             Map envMap = System.getenv();
             payload.append("<br/> <table border=1> <tr> <th>envvar</th> <th>value</th> </tr>");
             Set envKeys = envMap.keySet();
