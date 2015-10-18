@@ -130,6 +130,20 @@ public class HelloWorldResource {
             payload.append("<br/>use the envvars query parameter to dump all environment variables");
             payload.append("</body></html>");
         }
+
+        // delay
+        String delay = request.getParameter("delay");
+        if (delay != null) {
+            try {
+                Thread.sleep(Long.parseLong(delay));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            payload.append("<br/>use the delay query parameter to delay the response (ms)");
+            payload.append("</body></html>");
+        }
+
         return payload.toString();
     }
 
