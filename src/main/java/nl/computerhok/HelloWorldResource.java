@@ -154,20 +154,24 @@ public class HelloWorldResource {
             try {
                 Record[] records = new Lookup(query, Type.SRV).run();
                 if (records != null) {
-                    payload.append("<br/> Querying " + query + "<br/> <table border=1> <tr> <th>DNS host</th> <th>port</th> <th>ttl</th> <th>message</th> <th>toString()</th></tr>");
+                    payload.append("<br/> Querying " + query + "<br/> <table border=1> <tr> <th>Host/IP</th> <th>port</th> <th>ttl</th> <th>message</th> <th>SRVRecord.toString()</th></tr>");
                     for (Record record : records) {
                         SRVRecord srv = (SRVRecord) record;
                         String hostname = srv.getTarget().toString().replaceFirst("\\.$", "");
                         long ttl = srv.getTTL();
                         int port = srv.getPort();
                         String message;
+                        String IP = "-";
+                        String host = "-";
                         try {
                             Socket socket = new Socket(hostname,port);
                             message = "port open";
+                            IP = socket.getInetAddress().getHostAddress();
+                            host = socket.getInetAddress().getCanonicalHostName();
                         } catch (IOException e) {
                             message = e.getMessage();
                         }
-                        payload.append("<tr><td>" + hostname + "</td><td>" + port + "</td><td>" + ttl+ "</td><td>" + message+ "</td><td>" + srv.toString() + "</td></tr>");
+                        payload.append("<tr><td>" + host+"/"+IP + "</td><td>" + port + "</td><td>" + ttl+ "</td><td>" + message+ "</td><td>" + srv.toString() + "</td></tr>");
                     }
                     payload.append("</table>");
                 } else {
