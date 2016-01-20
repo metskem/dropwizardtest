@@ -1,16 +1,9 @@
 package nl.computerhok;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.cache.CacheBuilderSpec;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
-import io.dropwizard.auth.AuthFactory;
-import io.dropwizard.auth.CachingAuthenticator;
-import io.dropwizard.auth.basic.BasicAuthFactory;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -75,14 +68,14 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 //        removeDefaultExceptionMappers(environment);
 
 //        environment.jersey().register(new CustomExceptionMapper());
-
-        // authentication with cache (not used yet)
-        SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
-        MetricRegistry metricRegistry = new MetricRegistry();
-        CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
-
-        // authentication without cache
-        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
+//
+//        // authentication with cache (not used yet)
+//        SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
+//        MetricRegistry metricRegistry = new MetricRegistry();
+//        CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
+//
+//        // authentication without cache
+//        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
 
 //
 //        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new BasicAuthFactory<CachingAuthenticator>(cachingAuthenticator)),

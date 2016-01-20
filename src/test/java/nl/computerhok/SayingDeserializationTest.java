@@ -5,7 +5,7 @@ import io.dropwizard.jackson.Jackson;
 import org.junit.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class SayingDeserializationTest {

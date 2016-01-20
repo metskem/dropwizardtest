@@ -7,16 +7,13 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import static io.dropwizard.testing.FixtureHelpers.fixture;
-
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
+import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 

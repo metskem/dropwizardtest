@@ -1,20 +1,33 @@
 package nl.computerhok;
 
-import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.auth.Auth;
+import com.google.common.base.Optional;
 import io.dropwizard.jersey.caching.CacheControl;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xbill.DNS.Lookup;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.SRVRecord;
+import org.xbill.DNS.TextParseException;
+import org.xbill.DNS.Type;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
@@ -22,26 +35,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/helloworld")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
-    private final String template;
-    private final String defaultName;
-    private final AtomicLong counter;
-    private final String RESOURCE_PATH = "helloworld";
+    private final static String RESOURCE_PATH = "helloworld";
     private final SayingDAO dao;
 
     private static int simpleHitCounter;
     private static final LocalDateTime startTime = new LocalDateTime();
 
     public HelloWorldResource(SayingDAO dao, String template, String defaultName) {
-        this.template = template;
-        this.defaultName = defaultName;
-        this.counter = new AtomicLong();
         this.dao = dao;
     }
 
@@ -80,20 +86,20 @@ public class HelloWorldResource {
         StringBuilder payload = new StringBuilder();
         payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
 //        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
-        payload.append("<tr><td>application version</td><td>" + "1.3 </td></tr>");
-        payload.append("<tr><td>server time           </td><td>" +  new LocalDateTime() + "</td></tr>");
-        payload.append("<tr><td>instance start time   </td><td>" +  startTime + "</td></tr>");
-        payload.append("<tr><td>instance hitcount     </td><td>" +  ++simpleHitCounter + "</td></tr>");
-        payload.append("<tr><td>request uri           </td><td>" +  request.getRequestURI() + "</td></tr>");
-        payload.append("<tr><td>ctx version (maj/min) </td><td>" +  request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion() + "</td></tr>");
-        payload.append("<tr><td>context server info   </td><td>" +  request.getServletContext().getServerInfo() + "</td></tr>");
+        payload.append("<tr><td>application version</td><td>1.2 </td></tr>");
+        payload.append("<tr><td>server time           </td><td>" + new LocalDateTime() + "</td></tr>");
+        payload.append("<tr><td>instance start time   </td><td>" + startTime + "</td></tr>");
+        payload.append("<tr><td>instance hitcount     </td><td>" + ++simpleHitCounter + "</td></tr>");
+        payload.append("<tr><td>request uri           </td><td>" + request.getRequestURI() + "</td></tr>");
+        payload.append("<tr><td>ctx version (maj/min) </td><td>" + request.getServletContext().getMajorVersion() + "/" + request.getServletContext().getMinorVersion() + "</td></tr>");
+        payload.append("<tr><td>context server info   </td><td>" + request.getServletContext().getServerInfo() + "</td></tr>");
 
-        payload.append("<tr><td>current session       </td><td>" +  request.getSession(false) + "</td></tr>");
+        payload.append("<tr><td>current session       </td><td>" + request.getSession(false) + "</td></tr>");
 
-        payload.append("<tr><td>remote user           </td><td>" +  request.getRemoteUser() + "</td></tr>");
-        payload.append("<tr><td>remote host           </td><td>" +  request.getRemoteHost() + "</td></tr>");
+        payload.append("<tr><td>remote user           </td><td>" + request.getRemoteUser() + "</td></tr>");
+        payload.append("<tr><td>remote host           </td><td>" + request.getRemoteHost() + "</td></tr>");
         try {
-            payload.append("<tr><td>responding host       </td><td>" +  InetAddress.getLocalHost().getHostName() + "</td></tr>");
+            payload.append("<tr><td>responding host       </td><td>" + InetAddress.getLocalHost().getHostName() + "</td></tr>");
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -112,7 +118,6 @@ public class HelloWorldResource {
 
         } else {
             payload.append("<br/>use the headers query parameter to dump all headers");
-            payload.append("</body></html>");
         }
 
         // dump envvars
@@ -128,7 +133,6 @@ public class HelloWorldResource {
 
         } else {
             payload.append("<br/>use the envvars query parameter to dump all environment variables");
-            payload.append("</body></html>");
         }
 
         // delay
@@ -141,8 +145,42 @@ public class HelloWorldResource {
             }
         } else {
             payload.append("<br/>use the delay query parameter to delay the response (ms)");
-            payload.append("</body></html>");
         }
+
+        // query dns
+        String dnsquery = request.getParameter("dnsquery");
+        if (dnsquery != null) {
+            String query = "_" + dnsquery + "._tcp.marathon.mesos";
+            try {
+                Record[] records = new Lookup(query, Type.SRV).run();
+                if (records != null) {
+                    payload.append("<br/> Querying " + query + "<br/> <table border=1> <tr> <th>DNS host</th> <th>port</th> <th>ttl</th> <th>message</th> <th>toString()</th></tr>");
+                    for (Record record : records) {
+                        SRVRecord srv = (SRVRecord) record;
+                        String hostname = srv.getTarget().toString().replaceFirst("\\.$", "");
+                        long ttl = srv.getTTL();
+                        int port = srv.getPort();
+                        String message;
+                        try {
+                            Socket socket = new Socket(hostname,port);
+                            message = "port open";
+                        } catch (IOException e) {
+                            message = e.getMessage();
+                        }
+                        payload.append("<tr><td>" + hostname + "</td><td>" + port + "</td><td>" + ttl+ "</td><td>" + message+ "</td><td>" + srv.toString() + "</td></tr>");
+                    }
+                    payload.append("</table>");
+                } else {
+                    payload.append("<br/> dns lookup gave zero results");
+                }
+            } catch (TextParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            payload.append("<br/>use the dnsquery query parameter to perform a dns query, specify the marathon appname, we will query for <pre> _<appname>._tcp.marathon.mesos </pre>");
+        }
+
+        payload.append("</body></html>");
 
         return payload.toString();
     }
@@ -158,14 +196,14 @@ public class HelloWorldResource {
     }
 
     @POST
-    public Response create(@Auth String user, Saying saying) throws Exception {
+    public Response create(Saying saying) throws Exception {
         try {
             if (saying.getContent().contains("exception")) {
                 throw new IllegalArgumentException("dag knul, je wou een exception, hier heb je m");
             }
             long newid = dao.insert(saying.getContent());
             saying.setId(newid);
-            LOG.error("user " + user + " created saying " + saying);
+            LOG.error(" created saying " + saying);
             return Response.created(new URI(RESOURCE_PATH + "/" + newid)).build();
         } catch (Exception e) {
             throw new WebApplicationException(e);

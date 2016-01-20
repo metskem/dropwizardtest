@@ -1,8 +1,6 @@
 package nl.computerhok;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import jersey.repackaged.com.google.common.base.Objects;
 import org.hibernate.validator.constraints.Length;
 
 public class Saying {

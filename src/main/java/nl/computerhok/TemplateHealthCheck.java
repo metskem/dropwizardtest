@@ -1,7 +1,6 @@
 package nl.computerhok;
 
 import com.codahale.metrics.health.HealthCheck;
-import org.skife.jdbi.v2.DBI;
 
 public class TemplateHealthCheck extends HealthCheck {
     private final String template;

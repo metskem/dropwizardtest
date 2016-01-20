@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 
 public class CustomExceptionMapper implements ExceptionMapper<Throwable> {
 
