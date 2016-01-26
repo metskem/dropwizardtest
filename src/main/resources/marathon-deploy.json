@@ -1,0 +1,38 @@
+{
+  "id": "fulltest",
+  "uris": [
+    "http://lsrv4008.linux.rabobank.nl:4711/artifacts/dropwizardtest-1.3-assembly.zip"
+  ],
+  "cmd": "java -jar dropwizardtest*/dropwizardtest*.jar server dropwizardtest*/helloworld.yaml && echo \"ended from json\" > /tmp/ff.fulltest",
+  "env": {
+    "DW_JDBC_URL":"jdbc:mysql://lsrv4180/dropwizardtest"
+  },
+  "healthChecks":[
+    {
+      "path": "/healthcheck",
+      "portIndex": 1,
+      "protocol": "HTTP",
+      "gracePeriodSeconds": 30,
+      "intervalSeconds": 10,
+      "timeoutSeconds": 5,
+      "maxConsecutiveFailures": 3
+    }
+  ],
+  "instances": 2,
+  "ports":[0,0],
+  "upgradeStrategy": {
+    "minimumHealthCapacity": 0.5,
+    "maximumOverCapacity": 0.2
+  },
+  "labels": {
+    "rabo_proxy_path":"fulltest",
+    "rabo_proxy_hosts":"lsrv8215.linux.rabobank.nl",
+    "rabo_proxy_set": "prototype"
+  },
+  "cpus": 0.05,
+  "memory": 128,
+  "disk": 300,
+  "backoffFactor": 1.5,
+  "backoffSeconds": 5,
+  "maxLaunchDelaySeconds": 600
+}

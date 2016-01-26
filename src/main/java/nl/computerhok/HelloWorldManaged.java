@@ -6,6 +6,12 @@ import org.slf4j.LoggerFactory;
 
 public class HelloWorldManaged implements Managed{
     private  static Logger LOG = LoggerFactory.getLogger(HelloWorldManaged.class);
+    private HelloWorldConfiguration configuration;
+
+    public HelloWorldManaged(HelloWorldConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
     public void start() throws Exception {
         LOG.error("invoked start() method");
@@ -14,5 +20,7 @@ public class HelloWorldManaged implements Managed{
     @Override
     public void stop() throws Exception {
         LOG.error("invoked stop() method");
+        ConsulServiceRegistry consulServiceRegistry = new ConsulServiceRegistry(configuration);
+        consulServiceRegistry.deregisterService();
     }
 }

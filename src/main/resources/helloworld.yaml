@@ -1,6 +1,12 @@
 template: Hello, %s!
 defaultName: dag knul!
 
+consul_servicename: ${DW_SERVICENAME:-NONE}
+consul_serviceid: ${MESOS_TASK_ID:-MISSING}
+consul_serviceport: ${PORT0:-8081}
+consul_servicecheckhttp: http://${HOST}:${PORT1}/healthcheck
+consul_servicecheckinterval: ${DW_SERVICECHECKINTERVAL:-20s}
+
 logging:
   level: ${DW_LOGLEVEL:-info}
   appenders:

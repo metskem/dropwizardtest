@@ -1,6 +1,11 @@
 template: Hello, %s!
 defaultName: dag knul!
 
+consul_servicename: ${DW_SERVICENAME:-NONE}
+consul_serviceport: ${DW_SERVICEPORT:-8081}
+consul_servicecheckhttp: ${http://${HOST}:$PORT1}/healthcheck}
+consul_servicecheckinterval: ${DW_SERVICECHECKINTERVAL:-20s}
+
 server:
   applicationConnectors:
     - type: http

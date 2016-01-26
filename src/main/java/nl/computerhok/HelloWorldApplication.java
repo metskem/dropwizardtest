@@ -47,7 +47,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         environment.healthChecks().register("template", healthCheck);
 
         // managed components (do something during start and/or stop of application)
-        environment.lifecycle().manage(new HelloWorldManaged());
+        environment.lifecycle().manage(new HelloWorldManaged(configuration));
 
         // tasks
         environment.admin().addTask(new HelloWorldTask());
@@ -82,6 +82,9 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 //                "BasicAuth Realm", User.class));
 //
 
+        ConsulServiceRegistry serviceRegistryHelper = new ConsulServiceRegistry(configuration);
+        serviceRegistryHelper.registerService();
+        
     }
 
     private void removeDefaultExceptionMappers(Environment environment) {
