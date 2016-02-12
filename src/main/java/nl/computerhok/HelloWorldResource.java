@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
+    public static final String VERSION = "1.4 (2016-02-12 09:19)";
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldResource.class);
     private final static String RESOURCE_PATH = "helloworld";
     private final SayingDAO dao;
@@ -86,7 +87,7 @@ public class HelloWorldResource {
         StringBuilder payload = new StringBuilder();
         payload.append("<html><body><table border=1 bgcolor=\"FF8C00\"> ");   // orange background
 //        payload.append("<html><body><table border=1 bgcolor=\"4D4DFF\"> ");   //blue background
-        payload.append("<tr><td>application version</td><td>1.2 </td></tr>");
+        payload.append("<tr><td>application version</td><td>" + VERSION + "</td></tr>");
         payload.append("<tr><td>server time           </td><td>" + new LocalDateTime() + "</td></tr>");
         payload.append("<tr><td>instance start time   </td><td>" + startTime + "</td></tr>");
         payload.append("<tr><td>instance hitcount     </td><td>" + ++simpleHitCounter + "</td></tr>");
