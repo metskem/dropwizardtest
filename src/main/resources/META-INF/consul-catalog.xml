@@ -1,0 +1,5 @@
+<catalog>
+    <service name="fulltest02xx" port="${PORT0}">
+        <http-check url="http://localhost:${PORT1}/healthcheck"/>
+    </service>
+</catalog>
