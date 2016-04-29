@@ -144,7 +144,7 @@
                 <executions>
                     <execution>
                         <id>create-archive</id>
-                        <phase>package</phase>
+                        <phase>package.ff.niet</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>

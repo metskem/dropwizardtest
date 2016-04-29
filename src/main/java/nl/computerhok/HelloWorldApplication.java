@@ -26,9 +26,18 @@ import java.util.Set;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldApplication.class);
+    public static final String PROP_DROPWIZARD_YAML = "DROPWIZARD_YAML";
 
     public static void main(String[] args) throws Exception {
-        new HelloWorldApplication().run(args);
+        if (args.length != 0) {
+            System.out.println("do not specify arguments, we take the value of the envvar \"DROPWIZARD_YAML\" as the name of the dropwizard config file");
+        }
+        String DY = System.getenv(PROP_DROPWIZARD_YAML);
+        if (DY == null) {
+            System.out.println("Specify envvar " + PROP_DROPWIZARD_YAML + " to specify the dropwizard yaml config file");
+            System.exit(8);
+        }
+        new HelloWorldApplication().run(new String[] {"server", DY});
     }
 
     @Override
@@ -54,10 +63,10 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         environment.healthChecks().register("template", healthCheck);
 
         // managed components (do something during start and/or stop of application)
-        environment.lifecycle().manage(new HelloWorldManaged());
+//        environment.lifecycle().manage(new HelloWorldManaged());
 
         // tasks
-        environment.admin().addTask(new HelloWorldTask());
+//        environment.admin().addTask(new HelloWorldTask());
 
         // we want to use HttpSessions
         environment.servlets().setSessionHandler(new SessionHandler());

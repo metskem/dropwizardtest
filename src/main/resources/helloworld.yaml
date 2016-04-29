@@ -8,17 +8,14 @@ logging:
       threshold: ALL
       timeZone: UTC
       target: stdout
+      logFormat: "%date %level %logger %message \n"
 
 server:
-  applicationConnectors:
-    - type: http
-      port: ${PORT0:-8080}
-      # keyStorePath: ${DW_KEYSTORE_PATH:-/home/metskem/.keystore}
-      # keyStorePassword: ${DW_KEYSTORE_PASSWORD:-changeit}
-      # validateCerts: false
-  adminConnectors:
-    - type: http
-      port: ${PORT1:-9001}
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  requestLog:
+    appenders: []
 
 database:
   # the name of your JDBC driver
@@ -50,7 +47,7 @@ database:
   minSize: 0
 
   # the maximum number of connections to keep open
-  maxSize: 15
+  maxSize: ${DW_JDBC_MAXSIZE:-2}
 
   # whether or not idle connections should be validated
   checkConnectionWhileIdle: true

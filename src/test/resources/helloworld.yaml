@@ -2,9 +2,11 @@ template: Hello, %s!
 defaultName: dag knul!
 
 server:
-  applicationConnectors:
-    - type: http
-      port: ${DW_HTTP_PORT:-8080}
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  requestLog:
+    appenders: []
 
 logging:
   level: ${DW_LOGLEVEL:-info}
@@ -13,6 +15,7 @@ logging:
       threshold: ALL
       timeZone: UTC
       target: stdout
+      logFormat: "%date %level %logger %message\n"
 
 # server:
 #  type: simple
@@ -29,7 +32,7 @@ database:
   password: dropwizardtest
 
   # the JDBC URL
-  url: jdbc:mysql://lsrv4180.linux.rabobank.nl/dropwizardtest
+  url: ${DW_JDBC_URL:-jdbc:mysql://localhost/dropwizardtest}
 
   # any properties specific to your JDBC driver:
   properties:
