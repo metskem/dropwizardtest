@@ -1,0 +1,11 @@
+applications:
+- path: target/dropwizardtest-1.4.jar
+  memory: 150M
+  disk_quota: 1024M
+  buildpack: java_buildpack
+  env:
+    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
+    DROPWIZARD_YAML: helloworld.yaml
+    DW_JDBC_URL: MISSING_JDBC_URL
+    DW_JDBC_PASSWORD: MISSING_JDBC_PASSWORD
+    DW_JDBC_USER: MISSING_JDBC_PASSWORD

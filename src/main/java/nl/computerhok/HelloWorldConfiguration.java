@@ -1,20 +1,24 @@
 package nl.computerhok;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Iterator;
 
 public class HelloWorldConfiguration extends Configuration {
+    Logger LOG = LoggerFactory.getLogger(HelloWorldConfiguration.class);
+    public final static String PROP_JDBC_VCAP_SERVICE = "JDBC_VCAP_SERVICE";
 
     private DataSourceFactory database = new DataSourceFactory();
-    
-    private String consul_servicename;
-    private String consul_serviceid;
-    private int consul_serviceport;
-    private String consul_servicecheckhttp;
-    private String consul_servicecheckinterval;
+
     @NotEmpty
     private String template;
 
@@ -43,59 +47,48 @@ public class HelloWorldConfiguration extends Configuration {
 
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
-        return database;
+        // check if we are at cloudfoundry and someone specified to use the VCAP_SERVICES envvar for JDBC config
+        String jdbcService = System.getenv(PROP_JDBC_VCAP_SERVICE);
+        if (jdbcService != null) {
+            String vcap_services = System.getenv("VCAP_SERVICES");
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                LOG.debug("reading JSON config:\n" + vcap_services);
+                JsonNode vcapservices = objectMapper.readTree(vcap_services);
+                Iterator services = vcapservices.iterator();
+                while (services.hasNext()) {
+                    JsonNode service = (JsonNode) services.next();
+                    Iterator iterator = service.iterator();
+                    while (iterator.hasNext()) {
+                        JsonNode serviceAttributes = (JsonNode) iterator.next();
+                        if (serviceAttributes != null) {
+                            JsonNode credentials = serviceAttributes.get("credentials");
+                            if (credentials != null) {
+                                JsonNode jdbcurl = credentials.get("jdbcUrl");
+                                JsonNode username = credentials.get("username");
+                                JsonNode password = credentials.get("password");
+                                if (jdbcurl != null && username != null && password != null) {
+                                    database.setUrl(jdbcurl.textValue());
+                                    database.setUser(username.textValue());
+                                    database.setPassword(password.textValue());
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            LOG.info("no " + PROP_JDBC_VCAP_SERVICE + " envvar found, we will not configure from envvar VCAP_SERVICES");
+        }return database;
     }
 
     @JsonProperty("database")
     public void setDataSourceFactory(DataSourceFactory database) {
         this.database = database;
-    }
-
-    public String getConsul_servicename() {
-        return consul_servicename;
-    }
-    
-    @JsonProperty
-    public void setConsul_servicename(String consul_servicename) {
-        this.consul_servicename = consul_servicename;
-    }
-
-    public String getConsul_serviceid() {
-        return consul_serviceid;
-    }
-
-    public void setConsul_serviceid(String consul_serviceid) {
-        this.consul_serviceid = consul_serviceid;
-    }
-
-    @JsonProperty
-    public int getConsul_serviceport() {
-        return consul_serviceport;
-    }
-
-    @JsonProperty
-    public void setConsul_serviceport(int consul_serviceport) {
-        this.consul_serviceport = consul_serviceport;
-    }
-
-    @JsonProperty
-    public String getConsul_servicecheckinterval() {
-        return consul_servicecheckinterval;
-    }
-
-    @JsonProperty
-    public void setConsul_servicecheckinterval(String consul_servicecheckinterval) {
-        this.consul_servicecheckinterval = consul_servicecheckinterval;
-    }
-
-    @JsonProperty
-    public String getConsul_servicecheckhttp() {
-        return consul_servicecheckhttp;
-    }
-
-    @JsonProperty
-    public void setConsul_servicecheckhttp(String consul_servicecheckhttp) {
-        this.consul_servicecheckhttp = consul_servicecheckhttp;
     }
 
 }

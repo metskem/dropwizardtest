@@ -6,6 +6,5 @@ release.properties
 .idea/
 .settings/
 *.iml
-META-INF/
 .project
 .classpath

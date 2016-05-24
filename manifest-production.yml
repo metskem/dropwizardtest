@@ -1,0 +1,11 @@
+applications:
+- path: target/dropwizardtest-1.4.jar
+  memory: 250M
+  disk_quota: 1024M
+  buildpack: java_buildpack
+  env:
+    JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
+    DROPWIZARD_YAML: helloworld.yaml
+    JDBC_VCAP_SERVICE: MySQLDB2
+    DW_JDBC_MAXSIZE: 1
+    DW_LOGLEVEL: info

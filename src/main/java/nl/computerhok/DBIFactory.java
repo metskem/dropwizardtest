@@ -6,16 +6,9 @@ import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
 import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
-import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
-import io.dropwizard.jdbi.DBIHealthCheck;
-import io.dropwizard.jdbi.ImmutableListContainerFactory;
-import io.dropwizard.jdbi.ImmutableSetContainerFactory;
-import io.dropwizard.jdbi.NamePrependingStatementRewriter;
-import io.dropwizard.jdbi.OptionalContainerFactory;
-import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
-import io.dropwizard.jdbi.args.JodaDateTimeMapper;
+import io.dropwizard.jdbi.*;
 import io.dropwizard.jdbi.args.OptionalArgumentFactory;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
@@ -23,8 +16,6 @@ import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.LoggerFactory;
-
-import java.util.TimeZone;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -71,8 +62,6 @@ public class DBIFactory {
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
-        dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory());
-        dbi.registerMapper(new JodaDateTimeMapper(Optional.of(TimeZone.getDefault())));
         return dbi;
     }
 }

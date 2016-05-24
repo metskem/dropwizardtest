@@ -1,16 +1,6 @@
 template: Hello, %s!
 defaultName: dag knul!
 
-consul_servicename: ${DW_SERVICENAME:-NONE}
-consul_serviceport: ${DW_SERVICEPORT:-8081}
-consul_servicecheckhttp: ${http://${HOST}:$PORT1}/healthcheck}
-consul_servicecheckinterval: ${DW_SERVICECHECKINTERVAL:-20s}
-
-server:
-  applicationConnectors:
-    - type: http
-      port: ${DW_HTTP_PORT:-8080}
-
 logging:
   level: ${DW_LOGLEVEL:-info}
   appenders:
@@ -18,6 +8,17 @@ logging:
       threshold: ALL
       timeZone: UTC
       target: stdout
+      logFormat: "%date %level %logger %message\n"
+
+server:
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: ${PORT:-8080}
+  requestLog:
+    appenders: []
 
 # server:
 #  type: simple
@@ -34,7 +35,7 @@ database:
   password: dropwizardtest
 
   # the JDBC URL
-  url: jdbc:mysql://lsrv4180.linux.rabobank.nl/dropwizardtest
+  url: ${DW_JDBC_URL:-jdbc:mysql://localhost/dropwizardtest}
 
   # any properties specific to your JDBC driver:
   properties:

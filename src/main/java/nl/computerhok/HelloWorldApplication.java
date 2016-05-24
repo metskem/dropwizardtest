@@ -19,9 +19,19 @@ import java.util.Set;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldApplication.class);
+    public static final String VERSION = "2016-05-05 19:55";
+    public static final String PROP_DROPWIZARD_YAML = "DROPWIZARD_YAML";
 
     public static void main(String[] args) throws Exception {
-        new HelloWorldApplication().run(args);
+        if (args.length != 0) {
+            System.out.println("do not specify arguments, we take the value of the envvar \"DROPWIZARD_YAML\" as the name of the dropwizard config file");
+        }
+        String DY = System.getenv(PROP_DROPWIZARD_YAML);
+        if (DY == null) {
+            System.out.println("Provide envvar " + PROP_DROPWIZARD_YAML + " to specify the dropwizard yaml config file");
+            System.exit(8);
+        }
+        new HelloWorldApplication().run(new String[] {"server", DY});
     }
 
     @Override
@@ -42,15 +52,16 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     @Override
     public void run(HelloWorldConfiguration configuration, Environment environment) {
 
+        LOG.warn("Starting helloworld app, version " + VERSION);
         // health check
         final TemplateHealthCheck healthCheck = new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
 
         // managed components (do something during start and/or stop of application)
-        environment.lifecycle().manage(new HelloWorldManaged(configuration));
+//        environment.lifecycle().manage(new HelloWorldManaged());
 
         // tasks
-        environment.admin().addTask(new HelloWorldTask());
+//        environment.admin().addTask(new HelloWorldTask());
 
         // we want to use HttpSessions
         environment.servlets().setSessionHandler(new SessionHandler());
@@ -68,13 +79,13 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 //        removeDefaultExceptionMappers(environment);
 
 //        environment.jersey().register(new CustomExceptionMapper());
-//
-//        // authentication with cache (not used yet)
+
+        // authentication with cache (not used yet)
 //        SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
 //        MetricRegistry metricRegistry = new MetricRegistry();
 //        CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
-//
-//        // authentication without cache
+
+        // authentication without cache
 //        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
 
 //
@@ -82,9 +93,6 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 //                "BasicAuth Realm", User.class));
 //
 
-        ConsulServiceRegistry serviceRegistryHelper = new ConsulServiceRegistry(configuration);
-        serviceRegistryHelper.registerService();
-        
     }
 
     private void removeDefaultExceptionMappers(Environment environment) {
