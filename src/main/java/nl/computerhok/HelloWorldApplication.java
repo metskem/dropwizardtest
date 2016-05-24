@@ -1,16 +1,9 @@
 package nl.computerhok;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.cache.CacheBuilderSpec;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
-import io.dropwizard.auth.AuthFactory;
-import io.dropwizard.auth.CachingAuthenticator;
-import io.dropwizard.auth.basic.BasicAuthFactory;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -26,6 +19,7 @@ import java.util.Set;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     private static Logger LOG = LoggerFactory.getLogger(HelloWorldApplication.class);
+    public static final String VERSION = "2016-05-05 19:55";
     public static final String PROP_DROPWIZARD_YAML = "DROPWIZARD_YAML";
 
     public static void main(String[] args) throws Exception {
@@ -34,7 +28,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         }
         String DY = System.getenv(PROP_DROPWIZARD_YAML);
         if (DY == null) {
-            System.out.println("Specify envvar " + PROP_DROPWIZARD_YAML + " to specify the dropwizard yaml config file");
+            System.out.println("Provide envvar " + PROP_DROPWIZARD_YAML + " to specify the dropwizard yaml config file");
             System.exit(8);
         }
         new HelloWorldApplication().run(new String[] {"server", DY});
@@ -58,6 +52,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     @Override
     public void run(HelloWorldConfiguration configuration, Environment environment) {
 
+        LOG.warn("Starting helloworld app, version " + VERSION);
         // health check
         final TemplateHealthCheck healthCheck = new TemplateHealthCheck(configuration.getTemplate());
         environment.healthChecks().register("template", healthCheck);
@@ -86,12 +81,12 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 //        environment.jersey().register(new CustomExceptionMapper());
 
         // authentication with cache (not used yet)
-        SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
-        MetricRegistry metricRegistry = new MetricRegistry();
-        CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
+//        SimpleAuthenticator simpleAuthenticator = new SimpleAuthenticator();
+//        MetricRegistry metricRegistry = new MetricRegistry();
+//        CachingAuthenticator<BasicCredentials, String> cachingAuthenticator = new CachingAuthenticator<>(metricRegistry, simpleAuthenticator, CacheBuilderSpec.parse("maximumSize=100"));
 
         // authentication without cache
-        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
+//        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new SimpleAuthenticator(),"SUPER SECRET STUFF", String.class)));
 
 //
 //        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new BasicAuthFactory<CachingAuthenticator>(cachingAuthenticator)),

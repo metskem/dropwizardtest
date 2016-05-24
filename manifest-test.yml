@@ -1,11 +1,9 @@
 applications:
 - path: target/dropwizardtest-1.4.jar
-  memory: 150M
+  memory: 250M
   disk_quota: 1024M
   buildpack: java_buildpack
   env:
     JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
     DROPWIZARD_YAML: helloworld.yaml
-    DW_JDBC_URL: jdbc:mysql://us-cdbr-iron-east-03.cleardb.net/ad_e8f1d2d8bae0e6b
-    DW_JDBC_PASSWORD: 7c243fea
-    DW_JDBC_USER: b1a48876b30495
+    JDBC_VCAP_SERVICE: MySQLDB2

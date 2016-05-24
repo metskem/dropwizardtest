@@ -1,13 +1,6 @@
 template: Hello, %s!
 defaultName: dag knul!
 
-server:
-  type: simple
-  applicationContextPath: /
-  adminContextPath: /admin
-  requestLog:
-    appenders: []
-
 logging:
   level: ${DW_LOGLEVEL:-info}
   appenders:
@@ -16,6 +9,16 @@ logging:
       timeZone: UTC
       target: stdout
       logFormat: "%date %level %logger %message\n"
+
+server:
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: ${PORT:-8080}
+  requestLog:
+    appenders: []
 
 # server:
 #  type: simple

@@ -81,9 +81,9 @@ public class HelloWorldConfiguration extends Configuration {
                 e.printStackTrace();
             }
 
-        }
-        LOG.info("no " + PROP_JDBC_VCAP_SERVICE + " property found, we will not configure from envvar VCAP_SERVICES");
-        return database;
+        } else {
+            LOG.info("no " + PROP_JDBC_VCAP_SERVICE + " envvar found, we will not configure from envvar VCAP_SERVICES");
+        }return database;
     }
 
     @JsonProperty("database")

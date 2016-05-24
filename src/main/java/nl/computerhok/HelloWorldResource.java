@@ -2,7 +2,6 @@ package nl.computerhok;
 
 import com.google.common.base.Optional;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.auth.Auth;
 import io.dropwizard.jersey.caching.CacheControl;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -157,14 +156,15 @@ public class HelloWorldResource {
     }
 
     @POST
-    public Response create(@Auth String user, Saying saying) throws Exception {
+    @Timed
+    public Response create(Saying saying) throws Exception {
         try {
             if (saying.getContent().contains("exception")) {
                 throw new IllegalArgumentException("dag knul, je wou een exception, hier heb je m");
             }
             long newid = dao.insert(saying.getContent());
             saying.setId(newid);
-            LOG.error("user " + user + " created saying " + saying);
+            LOG.error("created saying " + saying);
             return Response.created(new URI(RESOURCE_PATH + "/" + newid)).build();
         } catch (Exception e) {
             throw new WebApplicationException(e);
